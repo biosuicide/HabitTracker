@@ -356,7 +356,7 @@ with tab_inactive:
     inactive_habits = db.get_inactive()
     for habit_entry in inactive_habits:
             with st.container(border=True):
-                col_1, col_2, col_3 = st.columns(3)
+                col_1, col_2= st.columns(2)
                 with col_1:
                     habit_name = habit_entry
                     habit_data = db.get_habit_data(habit_name)
@@ -366,13 +366,15 @@ with tab_inactive:
                         period = habit_data.iloc[0]["period"],
                         active = habit_data.iloc[0]["active"]
                     )
+                    longest_streak = analysis.get_habits_series(
+                        name = habit_name, 
+                        all_series = False,
+                        period = habit.period
+                    )
                     st.header(body = habit.name, divider='blue')
                     st.subheader(habit.description) 
                     st.text(f"Period: {habit.period}")
                 with col_2:
-                    df = analysis.get_current_streak_series(name=habit_name)
-                    st.text(f"Streak Series: {df}")
-                with col_3:
                     if st.button("Modify Habit", key=habit.name):
                         modify_button(habit)
                     if st.button("Delete Habit", key=habit.name+"1"):
