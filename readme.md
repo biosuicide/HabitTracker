@@ -5,7 +5,7 @@ This app will track your habits. You can do it in your normal browser
 
 clone the repo using: 
 ```
-
+https://github.com/biosuicide/HabitTracker.git
 ```
 
 or simply donload it to a direction of your choice
