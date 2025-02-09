@@ -207,7 +207,6 @@ with tab_active_habits:
             )
 
             habit.check_completion_status()
-            st.text(habit.streak_complete)
             if habit.streak_complete == False:
                 with st.container(border=True):
                     col_1, col_2 = st.columns(2)
