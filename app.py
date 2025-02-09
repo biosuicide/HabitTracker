@@ -22,7 +22,7 @@ if "show_balloons" in st.session_state and st.session_state["show_balloons"]:
 # define tabs
 tab_active_habits, tab_analysis, tab_inactive = st.tabs(
     ["Your active Habits", 
-     "Analyse your habits",
+     "Analyze your habits",
      "Inactive Habits"
     ]
 )
