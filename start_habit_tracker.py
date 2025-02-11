@@ -3,30 +3,38 @@ import sys
 import subprocess
 
 def ensure_virtualenv():
-    # Define the virtual environment path
-    venv_path = os.path.join(os.getcwd(), 'venv')  # Assuming the virtual environment is named 'venv'
 
-    # Check if the virtual environment exists
+    """ Checks if a virtual environment already exists and creates one if not existent.
+        Activates the environment.
+    """
+
+    venv_path = os.path.join(os.getcwd(), 'venv')
+
     if not os.path.exists(venv_path):
         print("Virtual environment not found. Creating one...")
         subprocess.run([sys.executable, "-m", "venv", "venv"])
         print("Virtual environment created.")
 
-    # Modify the system path to use the virtual environment
     activate_venv(venv_path)
 
+
 def activate_venv(venv_path):
-    # Path to the virtual environment's executable
+
+    """ Activates the virtual environment """
+
     if os.name == 'nt':
         python_executable = os.path.join(venv_path, 'Scripts', 'python.exe')
     else:
         python_executable = os.path.join(venv_path, 'bin', 'python')
 
-    # Set the virtual environment's Python executable as the default
     sys.executable = python_executable
     print(f"Virtual environment activated using {venv_path}")
 
+
 def install_requirements():
+
+    """ Installs all requirements from the requiremnts.tx file """
+
     requirements_file = "requirements.txt"
     if os.path.exists(requirements_file):
         print(f"Installing packages from {requirements_file}...")
@@ -35,14 +43,16 @@ def install_requirements():
     else:
         print(f"No {requirements_file} found. Skipping dependency installation.")
 
+
 def run_streamlit_app():
-    # Get the absolute path to app.py
+    
+    """ Executes the streamlit app in the virtual environment. """
+
     app_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app.py")
     if not os.path.exists(app_file):
         print(f"Error: {app_file} does not exist.")
         sys.exit(1)
 
-    # Run the streamlit app
     streamlit_command = [sys.executable, "-m", "streamlit", "run", app_file]
     subprocess.run(streamlit_command)
 

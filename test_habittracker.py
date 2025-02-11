@@ -1,6 +1,6 @@
 import pytest
 import db
-from habittracker import Habit
+from habit import Habit
 import analysis as analysis
 
 import sqlite3
@@ -44,7 +44,6 @@ test_data = {
 #           Fixtures         #
 ##############################
 
-# creating test db_instance
 @pytest.fixture
 def db_instance():
     con = db.connect_db(database)
@@ -774,6 +773,8 @@ def test_get_active_habits_for_period(period, expected_habits):
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_sessionfinish(session, exitstatus):
+
     """Hook to run a function after all tests are executed."""
+    
     print("\n[pytest] All tests finished. Running final cleanup...")
     remove_db()

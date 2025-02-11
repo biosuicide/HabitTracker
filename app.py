@@ -1,6 +1,6 @@
 import streamlit as st
 
-from habittracker import Habit
+from habit import Habit
 import db
 import analysis
 
@@ -80,12 +80,14 @@ def modify_button(habit):
         )
         st.rerun()
 
+
 @st.dialog("Are you sure?")
 def delete_button(habit):
     st.text("The habit will be deleted permanently!")
     if st.button("Delete Habit", 2):
         habit.delete()
         st.rerun()
+
 
 @st.dialog("Fake Data")
 def add_fake_data_button(habit):
@@ -110,6 +112,7 @@ def add_fake_data_button(habit):
         )
         st.rerun()
 
+
 @st.dialog("Create your new habit")
 def Add_habit_button():
     habit_name = st.text_input("Name of the habit *")
@@ -132,6 +135,7 @@ def Add_habit_button():
             
             else:
                 st.rerun()
+
 
 # Test data, if db is empty
 def add_test_data():
@@ -176,8 +180,6 @@ def add_test_data():
                     date=date
                 )
 
-    
-
 
 # tab with all active habits
 with tab_active_habits:
@@ -191,7 +193,6 @@ with tab_active_habits:
             add_test_data()
             st.rerun()
 
-        
     else:
         st.subheader("📌 Habits Not Completed This Period")
 
@@ -219,10 +220,6 @@ with tab_active_habits:
 
                         # col_2 with current streak series and button
                         with col_2:
-                            # if habit.get_current_streak() > 0:
-                            #     st.markdown(f"Current Streak series: :green[{habit.get_current_streak()}]")
-                            # else:
-                            #     st.markdown(f"Current Streak series: :red[{habit.get_current_streak()}]")
                             if st.button("Mark completed", key=habit.name+"2"):
                                 habit.mark_as_complete()
                                 st.session_state["show_balloons"] = True
@@ -254,7 +251,7 @@ with tab_active_habits:
             if habit.streak_complete == True:
 
                 # expander to save space, rest same as above 
-                # w/o mark complete button
+                # current streak series insted of mark complete button
                 with st.expander(label=habit.name):
                     longest_streak = analysis.get_habits_series(
                         name = habit, 
@@ -267,13 +264,12 @@ with tab_active_habits:
                         st.header(body = habit.name, divider='blue')
                         st.subheader(habit.description) 
                         st.text(f"Period: {habit.period}")
+
                     with col_2:
                         if habit.get_current_streak() > 0:
                             st.markdown(f"Current Streak series: :green[{habit.get_current_streak()}]")
                         else:
                             st.markdown(f"Current Streak series: :red[{habit.get_current_streak()}]")
-
-                    # Buttons for habits
                         if st.button("Modify Habit", key=habit.name):
                             modify_button(habit)
                         if st.button("Delete Habit", key=habit.name+"1"):
@@ -300,20 +296,23 @@ with tab_analysis:
     with col_7:
         st.subheader("Habits")
         st.divider()
+
     with col_8:
         st.subheader("Current streak series")
         st.divider()
+
     with col_9:
         st.subheader("Longest streak series")
         st.divider()
 
-    # select only the habits, which are active and 
+    # only active habits
     df_habits = analysis.get_active_habits_for_period(select_period)
 
     for habit in df_habits["name"].tolist():
         with col_7:
             st.text(habit)
             st.divider()
+
         with col_8:
             streaks = analysis.get_current_streak_series(habit)
             if streaks == []:
@@ -321,7 +320,8 @@ with tab_analysis:
                 st.divider()
             else:
                 st.text(streaks)
-                st.divider()  
+                st.divider() 
+
         with col_9:
             longest_streak = analysis.get_habits_series(
                 name = habit, 
@@ -331,14 +331,11 @@ with tab_analysis:
             st.text(longest_streak.iloc[0]["streak_series"])
             st.divider()
 
+    # get data for habit series
     df_all_data = analysis.get_habits_series(
         all_series=True,
         period=select_period
     )
-
-    # st.dataframe(df_all_data)
-    # st.dataframe(db.get_tracking_data())
-
     if df_all_data.empty:
         st.text("No Habits for this period")
     else:
@@ -349,14 +346,16 @@ with tab_analysis:
             stack = "normalize",
             color = ["#fd0000", "#05ae11"],
             horizontal = True
-    )
-        
+    )  
 
+# tab for inactive habits
 with tab_inactive:
     inactive_habits = db.get_inactive()
     for habit_entry in inactive_habits:
             with st.container(border=True):
                 col_1, col_2= st.columns(2)
+
+                # information for the habit
                 with col_1:
                     habit_name = habit_entry
                     habit_data = db.get_habit_data(habit_name)
@@ -374,6 +373,8 @@ with tab_inactive:
                     st.header(body = habit.name, divider='blue')
                     st.subheader(habit.description) 
                     st.text(f"Period: {habit.period}")
+
+                # buttons for the habit
                 with col_2:
                     if st.button("Modify Habit", key=habit.name):
                         modify_button(habit)
